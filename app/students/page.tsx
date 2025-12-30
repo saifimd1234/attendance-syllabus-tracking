@@ -20,11 +20,7 @@ export default function StudentsPage() {
         fetchStats();
     }, []);
 
-    // Authorization: Redirect students to their own profile
-    if (user && !user.admin) {
-        window.location.href = `/students/${user.studentId}`;
-        return null;
-    }
+    // Authorization: Remove student auto-redirect to allow browsing
 
     const filteredStudents = students.filter(s =>
         s.name.toLowerCase().includes(searchTerm.toLowerCase())

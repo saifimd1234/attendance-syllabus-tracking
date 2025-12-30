@@ -15,9 +15,9 @@ export default function Navbar() {
     }, []);
 
     const links = [
-        { href: '/', label: 'Overview', icon: FaHome, adminOnly: true },
+        { href: '/', label: 'Overview', icon: FaHome, adminOnly: false },
         { href: '/students', label: 'Students', icon: FaUserGraduate, adminOnly: false },
-        { href: '/attendance', label: 'Attendance', icon: FaCalendarCheck, adminOnly: true },
+        { href: '/attendance', label: 'Attendance', icon: FaCalendarCheck, adminOnly: false },
     ].filter(link => !user || (!link.adminOnly || user.admin));
 
     return (

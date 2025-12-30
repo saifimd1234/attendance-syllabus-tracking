@@ -104,7 +104,7 @@ export default function Dashboard() {
           </p>
         </motion.div>
 
-        {user?.admin && (
+        {user && (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -179,54 +179,52 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Student Attendance Summary List (Admin Only) */}
-        {user?.admin && (
-          <Card className="lg:col-span-1 border-accent/20">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-xl">Daily Status Log</CardTitle>
-              <CardDescription>{selectedDate}</CardDescription>
-              <div className="relative mt-2">
-                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs" />
-                <Input
-                  placeholder="Search student..."
-                  className="pl-8 h-9 text-sm rounded-xl focus:ring-accent"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </CardHeader>
-            <CardContent className="max-h-[300px] overflow-y-auto pr-2 space-y-2">
-              {students.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase())).map((student) => {
-                const sid = (student.id || (student as any)._id) as string;
-                const record = selectedDateRecords.find(r => (r.studentId?._id || r.studentId) === sid);
-                const status = record?.status || 'N/A';
-                return (
-                  <div
-                    key={sid}
-                    onClick={() => setSelectedStudentId(sid)}
-                    className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer hover:scale-[1.02] ${selectedStudentId === sid ? 'bg-accent/10 border-accent/30' : 'bg-white/40 border-transparent hover:border-slate-200'}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">
-                        {student.name.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="text-sm font-bold">{student.name}</div>
-                        <div className="text-[10px] text-muted-foreground">{student.class}</div>
-                      </div>
+        {/* Student Attendance Summary List */}
+        <Card className={`lg:col-span-1 border-accent/20 ${!user?.admin ? 'h-full' : ''}`}>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl">Daily Status Log</CardTitle>
+            <CardDescription>{selectedDate}</CardDescription>
+            <div className="relative mt-2">
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs" />
+              <Input
+                placeholder="Search student..."
+                className="pl-8 h-9 text-sm rounded-xl focus:ring-accent"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </CardHeader>
+          <CardContent className="max-h-[300px] overflow-y-auto pr-2 space-y-2">
+            {students.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase())).map((student) => {
+              const sid = (student.id || (student as any)._id) as string;
+              const record = selectedDateRecords.find(r => (r.studentId?._id || r.studentId) === sid);
+              const status = record?.status || 'N/A';
+              return (
+                <div
+                  key={sid}
+                  onClick={() => setSelectedStudentId(sid)}
+                  className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer hover:scale-[1.02] ${selectedStudentId === sid ? 'bg-accent/10 border-accent/30' : 'bg-white/40 border-transparent hover:border-slate-200'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">
+                      {student.name.charAt(0)}
                     </div>
-                    <span className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${status === 'Present' ? 'bg-teal-100 text-teal-700' :
-                      status === 'Absent' ? 'bg-red-100 text-red-600' :
-                        status === 'Late' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-400'
-                      }`}>
-                      {status}
-                    </span>
+                    <div>
+                      <div className="text-sm font-bold">{student.name}</div>
+                      <div className="text-[10px] text-muted-foreground">{student.class}</div>
+                    </div>
                   </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-        )}
+                  <span className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${status === 'Present' ? 'bg-teal-100 text-teal-700' :
+                    status === 'Absent' ? 'bg-red-100 text-red-600' :
+                      status === 'Late' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-400'
+                    }`}>
+                    {status}
+                  </span>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Student Specific Analytics (Only selectable for Admin, always shown for Student) */}

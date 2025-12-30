@@ -71,18 +71,7 @@ export default function StudentProfile() {
 
     const { student, history, stats } = studentData;
 
-    // Authorization: If not admin and not the same student, show restricted message
-    if (user && !user.admin && user.studentId !== id) {
-        return (
-            <div className="p-8 text-center flex flex-col items-center justify-center min-h-[50vh] gap-4">
-                <h1 className="text-3xl font-bold text-red-600">Access Denied</h1>
-                <p className="text-muted-foreground">You are not authorized to view this profile.</p>
-                <Link href="/">
-                    <Button>Back to Home</Button>
-                </Link>
-            </div>
-        );
-    }
+    // Students can view other profiles but cannot edit them
 
     // Transform history for chart
     const chartData = [...history].reverse().map((h: any) => ({
@@ -92,7 +81,7 @@ export default function StudentProfile() {
 
     return (
         <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6">
-            {user?.admin && (
+            {user && (
                 <Link href="/students">
                     <Button variant="ghost" className="gap-2 pl-0 hover:bg-transparent hover:underline">
                         <FaArrowLeft /> Back to Students
@@ -104,34 +93,36 @@ export default function StudentProfile() {
                 {/* Profile Card */}
                 <Card className="w-full md:w-1/3 h-fit overflow-hidden relative group">
                     <div className="absolute top-4 right-4 z-10">
-                        {!isEditing ? (
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-8 w-8 p-0 rounded-full shadow-lg bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => setIsEditing(true)}
-                            >
-                                <FaEdit size={14} className="text-primary" />
-                            </Button>
-                        ) : (
-                            <div className="flex gap-2">
+                        {(user?.admin || user?.studentId === id) && (
+                            !isEditing ? (
                                 <Button
                                     size="sm"
                                     variant="outline"
-                                    className="h-8 w-8 p-0 rounded-full shadow-lg bg-white/80 backdrop-blur-sm"
-                                    onClick={() => setIsEditing(false)}
+                                    className="h-8 w-8 p-0 rounded-full shadow-lg bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() => setIsEditing(true)}
                                 >
-                                    <FaTimes size={14} className="text-destructive" />
+                                    <FaEdit size={14} className="text-primary" />
                                 </Button>
-                                <Button
-                                    size="sm"
-                                    variant="default"
-                                    className="h-8 w-8 p-0 rounded-full shadow-lg"
-                                    onClick={handleUpdate}
-                                >
-                                    <FaSave size={14} />
-                                </Button>
-                            </div>
+                            ) : (
+                                <div className="flex gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-8 w-8 p-0 rounded-full shadow-lg bg-white/80 backdrop-blur-sm"
+                                        onClick={() => setIsEditing(false)}
+                                    >
+                                        <FaTimes size={14} className="text-destructive" />
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="default"
+                                        className="h-8 w-8 p-0 rounded-full shadow-lg"
+                                        onClick={handleUpdate}
+                                    >
+                                        <FaSave size={14} />
+                                    </Button>
+                                </div>
+                            )
                         )}
                     </div>
 
