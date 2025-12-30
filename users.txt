@@ -1,0 +1,7 @@
+Admin:
+Email: admin@system.com
+Password: adminpassword123
+
+Student:
+Email: student@system.com
+Password: studentpassword123
