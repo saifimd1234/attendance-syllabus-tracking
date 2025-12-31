@@ -3,13 +3,14 @@ import Syllabus from "@/models/Syllabus";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/auth";
 
-export async function GET(req: NextRequest, { params }: { params: { studentId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ studentId: string }> }) {
     try {
+        const { studentId } = await params;
         await connect();
-        const syllabus = await Syllabus.findOne({ studentId: params.studentId });
+        const syllabus = await Syllabus.findOne({ studentId });
         // Return empty structure if not found so frontend doesn't crash
         if (!syllabus) {
-            return NextResponse.json({ studentId: params.studentId, subjects: [] });
+            return NextResponse.json({ studentId, subjects: [] });
         }
         return NextResponse.json(syllabus);
     } catch (error) {
@@ -17,18 +18,19 @@ export async function GET(req: NextRequest, { params }: { params: { studentId: s
     }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { studentId: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ studentId: string }> }) {
     try {
+        const { studentId } = await params;
         const user = await getUser(req);
-        if (!user || (!user.admin && user.studentId?.toString() !== params.studentId)) {
+        if (!user || (!user.admin && user.studentId?.toString() !== studentId)) {
             return NextResponse.json({ error: "Forbidden: Access denied" }, { status: 403 });
         }
         const { action, subjectName, chapterTitle, chapterStatus, startDate, endDate, subjectId, chapterId } = await req.json();
         await connect();
 
-        let syllabus = await Syllabus.findOne({ studentId: params.studentId });
+        let syllabus = await Syllabus.findOne({ studentId });
         if (!syllabus) {
-            syllabus = await Syllabus.create({ studentId: params.studentId, subjects: [] });
+            syllabus = await Syllabus.create({ studentId, subjects: [] });
         }
 
         if (action === 'ADD_SUBJECT') {
