@@ -5,21 +5,29 @@ import { getUser } from "@/lib/auth";
 
 export async function GET(
     req: NextRequest,
-    context: { params: Promise<{ studentId: string }> }
+    context: { params: { studentId: string } }
 ) {
     try {
-        const { studentId } = await context.params;
+        const { studentId } = context.params; // ✅ NO await
+
         await connect();
+
         const syllabus = await Syllabus.findOne({ studentId });
-        // Return empty structure if not found so frontend doesn't crash
+
+        // Safe fallback for frontend
         if (!syllabus) {
             return NextResponse.json({ studentId, subjects: [] });
         }
+
         return NextResponse.json(syllabus);
     } catch (error) {
-        return NextResponse.json({ error: "Failed to fetch syllabus" }, { status: 500 });
+        return NextResponse.json(
+            { error: "Failed to fetch syllabus" },
+            { status: 500 }
+        );
     }
 }
+
 
 
 export async function POST(
