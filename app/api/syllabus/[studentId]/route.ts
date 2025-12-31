@@ -3,9 +3,12 @@ import Syllabus from "@/models/Syllabus";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/auth";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ studentId: string }> }) {
+export async function GET(
+    req: NextRequest,
+    context: { params: Promise<{ studentId: string }> }
+) {
     try {
-        const { studentId } = await params;
+        const { studentId } = await context.params;
         await connect();
         const syllabus = await Syllabus.findOne({ studentId });
         // Return empty structure if not found so frontend doesn't crash
@@ -18,9 +21,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ stud
     }
 }
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ studentId: string }> }) {
+
+export async function POST(
+    req: NextRequest,
+    context: { params: Promise<{ studentId: string }> }
+) {
     try {
-        const { studentId } = await params;
+        const { studentId } = await context.params;
         const user = await getUser(req);
         if (!user || (!user.admin && user.studentId?.toString() !== studentId)) {
             return NextResponse.json({ error: "Forbidden: Access denied" }, { status: 403 });

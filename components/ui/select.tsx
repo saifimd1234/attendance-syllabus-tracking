@@ -1,17 +1,4 @@
 import * as React from "react"
-import * as SelectPrimitive from "@radix-ui/react-select"
-// Using simple select if radix not installed, wait... standard implementation requires radix-ui.
-// Since I cannot allow user to run many installs, I'll build a simplified Select component using standard HTML select for robustness 
-// unless I'm sure dependencies are there.
-// User asked for "Shadcn components". Shadcn uses Radix UI.
-// If I use Radix, user needs to install @radix-ui/react-select.
-// I haven't added that to package.json.
-// I should stick to a custom styled Select to avoid missing dependency errors since I can't auto-install everything easily.
-// OR I can use the existing `lucide-react` (which I removed) for icons.
-// Actually, I'll make a custom Select that looks like Shadcn but uses standard HTML <select> for simplicity and robust dependency-free usage
-// given the constraints, OR just use standard HTML select with Tailwind classes.
-// Let's make a wrapper around native select but styled well.
-
 import { cn } from "@/lib/utils"
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> { }
