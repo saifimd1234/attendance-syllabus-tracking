@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/auth";
 
 export async function GET(
-    req: NextRequest,
-    context: { params: { studentId: string } }
+    request: Request,
+    context: { params: Promise<{ studentId: string }> }
 ) {
     try {
-        const { studentId } = context.params; // ✅ NO await
+        const { studentId } = await context.params; // ✅ NO await
 
         await connect();
 
