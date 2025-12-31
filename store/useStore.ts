@@ -14,6 +14,9 @@ export type Chapter = {
     _id: string;
     title: string;
     status: 'Incomplete' | 'Ongoing' | 'Completed' | 'Revised Once' | 'Revised Twice';
+    startDate?: string;
+    endDate?: string;
+    timeTaken?: number;
 };
 
 export type Subject = {

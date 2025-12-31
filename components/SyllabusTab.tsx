@@ -60,16 +60,18 @@ export default function SyllabusTab({ studentId }: { studentId: string }) {
         }
     };
 
-    const handleStatusUpdate = async (subjectId: string, chapterId: string, status: string) => {
+    const handleUpdateChapter = async (subjectId: string, chapterId: string, updates: Partial<Chapter>) => {
         try {
             await updateSyllabus(studentId, {
                 action: 'UPDATE_STATUS',
                 subjectId,
                 chapterId,
-                chapterStatus: status
+                chapterStatus: updates.status,
+                startDate: updates.startDate,
+                endDate: updates.endDate
             });
         } catch (error) {
-            toast.error('Failed to update status');
+            toast.error('Failed to update chapter');
         }
     };
 
@@ -101,9 +103,7 @@ export default function SyllabusTab({ studentId }: { studentId: string }) {
                                     <XAxis type="number" domain={[0, 100]} hide />
                                     <YAxis dataKey="name" type="category" width={80} tick={{ fontSize: 10 }} />
                                     <Tooltip cursor={{ fill: 'transparent' }} />
-                                    <Bar dataKey="progress" fill="#0d9488" radius={[0, 4, 4, 0]} barSize={16}>
-                                        {/* Label list could go here */}
-                                    </Bar>
+                                    <Bar dataKey="progress" fill="#0d9488" radius={[0, 4, 4, 0]} barSize={16} />
                                 </BarChart>
                             </ResponsiveContainer>
                         ) : (
@@ -151,6 +151,13 @@ export default function SyllabusTab({ studentId }: { studentId: string }) {
                         { name: 'Pending', value: pending }
                     ];
 
+                    const chapterData = subject.chapters
+                        .filter(c => c.timeTaken && c.timeTaken > 0)
+                        .map(c => ({
+                            name: c.title.length > 10 ? c.title.substring(0, 10) + '...' : c.title,
+                            days: c.timeTaken
+                        }));
+
                     return (
                         <motion.div key={subject._id} layout>
                             <Card className="overflow-hidden border-slate-200">
@@ -164,34 +171,49 @@ export default function SyllabusTab({ studentId }: { studentId: string }) {
                                     </Badge>
                                 </div>
                                 <CardContent className="p-0">
-                                    <div className="flex flex-col md:flex-row">
-                                        {/* Charts & Info Side */}
-                                        <div className="w-full md:w-1/3 p-4 sm:p-6 border-b md:border-b-0 md:border-r bg-slate-50/30 flex flex-row md:flex-col items-center justify-center gap-4">
-                                            <div className="h-[100px] md:h-[150px] w-1/2 md:w-full">
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <PieChart>
-                                                        <Pie
-                                                            data={pieData}
-                                                            innerRadius={30}
-                                                            outerRadius={45}
-                                                            paddingAngle={5}
-                                                            dataKey="value"
-                                                        >
-                                                            <Cell fill="#10b981" />
-                                                            <Cell fill="#e2e8f0" />
-                                                        </Pie>
-                                                        <Tooltip />
-                                                    </PieChart>
-                                                </ResponsiveContainer>
-                                            </div>
-                                            <div className="text-center w-1/2 md:w-full">
-                                                <div className="text-[10px] sm:text-sm font-medium text-muted-foreground uppercase tracking-wider">Chapters</div>
-                                                <div className="text-xl sm:text-2xl font-black text-slate-800">{subject.chapters.length}</div>
+                                    <div className="flex flex-col xl:flex-row">
+                                        {/* Charts Side */}
+                                        <div className="w-full xl:w-2/5 p-4 sm:p-6 border-b xl:border-b-0 xl:border-r bg-slate-50/30">
+                                            <div className="flex flex-row xl:flex-col gap-4">
+                                                <div className="h-[120px] xl:h-[150px] w-1/3 xl:w-full">
+                                                    <ResponsiveContainer width="100%" height="100%">
+                                                        <PieChart>
+                                                            <Pie
+                                                                data={pieData}
+                                                                innerRadius={30}
+                                                                outerRadius={45}
+                                                                paddingAngle={5}
+                                                                dataKey="value"
+                                                            >
+                                                                <Cell fill="#10b981" />
+                                                                <Cell fill="#e2e8f0" />
+                                                            </Pie>
+                                                            <Tooltip />
+                                                        </PieChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                                <div className="h-[120px] xl:h-[180px] w-2/3 xl:w-full">
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2 text-center">Days per Chapter</p>
+                                                    {chapterData.length > 0 ? (
+                                                        <ResponsiveContainer width="100%" height="100%">
+                                                            <BarChart data={chapterData}>
+                                                                <XAxis dataKey="name" fontSize={8} interval={0} tick={{ fontSize: 8 }} />
+                                                                <YAxis fontSize={8} />
+                                                                <Tooltip contentStyle={{ fontSize: '10px' }} />
+                                                                <Bar dataKey="days" fill="#6366f1" radius={[2, 2, 0, 0]} />
+                                                            </BarChart>
+                                                        </ResponsiveContainer>
+                                                    ) : (
+                                                        <div className="flex items-center justify-center h-full text-[10px] text-muted-foreground italic">
+                                                            Needs start/end dates
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
                                         {/* Chapters List Side */}
-                                        <div className="w-full md:w-2/3 p-4 sm:p-6 space-y-4">
+                                        <div className="w-full xl:w-3/5 p-4 sm:p-6 space-y-4">
                                             {/* Add Chapter */}
                                             {isEditable && (
                                                 <div className="flex gap-2 mb-4">
@@ -207,24 +229,55 @@ export default function SyllabusTab({ studentId }: { studentId: string }) {
                                                 </div>
                                             )}
 
-                                            <div className="space-y-2 max-h-[250px] sm:max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                                            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
                                                 {subject.chapters.map((chapter) => (
-                                                    <div key={chapter._id} className="flex items-center justify-between p-2.5 sm:p-3 bg-white rounded-xl border hover:shadow-sm transition-all">
-                                                        <span className="font-semibold text-xs sm:text-sm text-slate-700 truncate mr-2">{chapter.title}</span>
-                                                        <select
-                                                            disabled={!isEditable}
-                                                            className="text-[10px] sm:text-xs font-bold p-1 rounded-lg border-none focus:ring-1 focus:ring-offset-0 cursor-pointer outline-none bg-slate-50 disabled:cursor-default"
-                                                            style={{
-                                                                color: STATUS_COLORS[chapter.status as keyof typeof STATUS_COLORS] || '#64748b',
-                                                                backgroundColor: `${STATUS_COLORS[chapter.status as keyof typeof STATUS_COLORS]}15`
-                                                            }}
-                                                            value={chapter.status}
-                                                            onChange={(e) => handleStatusUpdate(subject._id, chapter._id, e.target.value)}
-                                                        >
-                                                            {STATUS_OPTIONS.map(opt => (
-                                                                <option key={opt} value={opt}>{opt}</option>
-                                                            ))}
-                                                        </select>
+                                                    <div key={chapter._id} className="p-3 bg-white rounded-xl border hover:shadow-sm transition-all space-y-3">
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="font-semibold text-sm text-slate-700 truncate mr-2">{chapter.title}</span>
+                                                            <select
+                                                                disabled={!isEditable}
+                                                                className="text-[10px] sm:text-xs font-bold p-1 rounded-lg border-none focus:ring-1 focus:ring-offset-0 cursor-pointer outline-none bg-slate-50 disabled:cursor-default"
+                                                                style={{
+                                                                    color: STATUS_COLORS[chapter.status as keyof typeof STATUS_COLORS] || '#64748b',
+                                                                    backgroundColor: `${STATUS_COLORS[chapter.status as keyof typeof STATUS_COLORS]}15`
+                                                                }}
+                                                                value={chapter.status}
+                                                                onChange={(e) => handleUpdateChapter(subject._id, chapter._id, { status: e.target.value as any })}
+                                                            >
+                                                                {STATUS_OPTIONS.map(opt => (
+                                                                    <option key={opt} value={opt}>{opt}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 items-end">
+                                                            <div className="flex flex-col gap-1">
+                                                                <label className="text-[8px] font-bold uppercase text-muted-foreground">Start Date</label>
+                                                                <Input
+                                                                    type="date"
+                                                                    disabled={!isEditable}
+                                                                    value={chapter.startDate || ''}
+                                                                    onChange={(e) => handleUpdateChapter(subject._id, chapter._id, { startDate: e.target.value })}
+                                                                    className="h-7 text-[10px] p-1"
+                                                                />
+                                                            </div>
+                                                            <div className="flex flex-col gap-1">
+                                                                <label className="text-[8px] font-bold uppercase text-muted-foreground">End Date</label>
+                                                                <Input
+                                                                    type="date"
+                                                                    disabled={!isEditable}
+                                                                    value={chapter.endDate || ''}
+                                                                    onChange={(e) => handleUpdateChapter(subject._id, chapter._id, { endDate: e.target.value })}
+                                                                    className="h-7 text-[10px] p-1"
+                                                                />
+                                                            </div>
+                                                            <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
+                                                                <div className="h-7 flex items-center justify-center bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                                                                    <span className="text-[10px] font-black text-slate-500">
+                                                                        {chapter.timeTaken ? `${chapter.timeTaken} Days` : '--'}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 ))}
                                                 {subject.chapters.length === 0 && (

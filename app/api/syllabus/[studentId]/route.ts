@@ -20,10 +20,10 @@ export async function GET(req: NextRequest, { params }: { params: { studentId: s
 export async function POST(req: NextRequest, { params }: { params: { studentId: string } }) {
     try {
         const user = await getUser(req);
-        if (!user || (!user.admin && user.studentId !== params.studentId)) {
+        if (!user || (!user.admin && user.studentId?.toString() !== params.studentId)) {
             return NextResponse.json({ error: "Forbidden: Access denied" }, { status: 403 });
         }
-        const { action, subjectName, chapterTitle, chapterStatus, subjectId, chapterId } = await req.json();
+        const { action, subjectName, chapterTitle, chapterStatus, startDate, endDate, subjectId, chapterId } = await req.json();
         await connect();
 
         let syllabus = await Syllabus.findOne({ studentId: params.studentId });
@@ -39,15 +39,22 @@ export async function POST(req: NextRequest, { params }: { params: { studentId: 
                 subject.chapters.push({ title: chapterTitle, status: 'Incomplete' });
             }
         } else if (action === 'UPDATE_STATUS') {
-            // Find subject containing the chapter
-            // Since we might not have subjectId easily in UI for status update if we flatten, 
-            // but ideally we pass subjectId and chapterId.
-            // Mongoose subdocument finding:
             const subject = syllabus.subjects.id(subjectId);
             if (subject) {
                 const chapter = subject.chapters.id(chapterId);
                 if (chapter) {
-                    chapter.status = chapterStatus;
+                    if (chapterStatus) chapter.status = chapterStatus;
+                    if (startDate) chapter.startDate = startDate;
+                    if (endDate) chapter.endDate = endDate;
+
+                    // Calculate timeTaken if both dates exist
+                    if (chapter.startDate && chapter.endDate) {
+                        const start = new Date(chapter.startDate);
+                        const end = new Date(chapter.endDate);
+                        const diffTime = Math.abs(end.getTime() - start.getTime());
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        chapter.timeTaken = diffDays;
+                    }
                 }
             }
         }

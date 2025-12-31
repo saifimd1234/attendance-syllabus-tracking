@@ -9,9 +9,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         const user = await getUser(req);
         const { id } = await params;
 
-        // Only admins or the student themselves can access the profile
-        if (!user || (!user.admin && user.studentId !== id)) {
-            return NextResponse.json({ error: "Forbidden: Access denied" }, { status: 403 });
+        // Any logged in user can view profiles
+        if (!user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         await connect();
@@ -55,7 +55,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         const { id } = await params;
 
         // Only admins or the student themselves can update the profile
-        if (!user || (!user.admin && user.studentId !== id)) {
+        if (!user || (!user.admin && user.studentId?.toString() !== id)) {
             return NextResponse.json({ error: "Forbidden: Access denied" }, { status: 403 });
         }
 

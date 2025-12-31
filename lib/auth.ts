@@ -3,13 +3,20 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_super_secret_jwt_key_123";
 
+import connect from "@/lib/db";
+import User from "@/models/User";
+
 export async function getUser(req: NextRequest) {
     try {
         const token = req.cookies.get("token")?.value;
         if (!token) return null;
 
         const decoded: any = jwt.verify(token, JWT_SECRET);
-        return decoded;
+
+        await connect();
+        const user = await User.findById(decoded.id);
+
+        return user; // Returns the full mongoose document
     } catch (error) {
         return null;
     }

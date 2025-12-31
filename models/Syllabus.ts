@@ -6,7 +6,10 @@ const ChapterSchema = new Schema({
         type: String,
         enum: ['Incomplete', 'Ongoing', 'Completed', 'Revised Once', 'Revised Twice'],
         default: 'Incomplete'
-    }
+    },
+    startDate: { type: String },
+    endDate: { type: String },
+    timeTaken: { type: Number, default: 0 }
 });
 
 const SubjectSchema = new Schema({
