@@ -2,6 +2,10 @@ import mongoose, { Schema, model, models } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const UserSchema = new Schema({
+    name: {
+        type: String,
+        required: [true, "Please provide a name"]
+    },
     email: {
         type: String,
         required: [true, "Please provide an email"],

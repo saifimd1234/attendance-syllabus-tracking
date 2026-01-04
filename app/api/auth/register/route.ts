@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_super_secret_jwt_key_123";
 export async function POST(req: NextRequest) {
     try {
         await connect();
-        const { email, password, admin, studentId } = await req.json();
+        const { name, email, password, admin, studentId } = await req.json();
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
 
         // Create user
         const newUser = await User.create({
+            name,
             email,
             password,
             admin: admin || false,
