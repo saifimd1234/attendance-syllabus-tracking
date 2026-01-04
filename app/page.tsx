@@ -4,9 +4,14 @@ import { FaBook, FaCalendarCheck, FaChartBar, FaRocket, FaCode, FaDatabase, FaLa
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useStore } from '@/store/useStore';
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useStore();
+
+  const primaryLink = user ? "/dashboard" : "/register";
+  const secondaryLink = user ? "/dashboard" : "/login";
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-transparent">
@@ -33,11 +38,11 @@ export default function LandingPage() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-4">
-            <Link href="/login">
-              <Button variant="ghost" className="font-bold text-slate-600 hover:text-accent transition-colors">SignIn</Button>
+            <Link href={secondaryLink}>
+              <Button variant="ghost" className="font-bold text-slate-600 hover:text-accent transition-colors">{user ? "Dashboard" : "SignIn"}</Button>
             </Link>
-            <Link href="/register">
-              <Button className="bg-gradient-to-r from-accent to-secondary text-white font-bold px-8 rounded-full shadow-lg hover:scale-105 transition-all">Get Started</Button>
+            <Link href={primaryLink}>
+              <Button className="bg-gradient-to-r from-accent to-secondary text-white font-bold px-8 rounded-full shadow-lg hover:scale-105 transition-all">{user ? "Go to Dashboard" : "Get Started"}</Button>
             </Link>
           </div>
 
@@ -62,11 +67,11 @@ export default function LandingPage() {
             exit={{ opacity: 0, y: -20 }}
             className="fixed top-16 left-0 w-full bg-white/90 backdrop-blur-xl z-40 border-b border-white/20 p-6 flex flex-col gap-4 shadow-2xl md:hidden"
           >
-            <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-              <Button variant="outline" className="w-full h-14 rounded-2xl border-slate-200 font-bold">Sign In</Button>
+            <Link href={secondaryLink} onClick={() => setIsMenuOpen(false)}>
+              <Button variant="outline" className="w-full h-14 rounded-2xl border-slate-200 font-bold">{user ? "Dashboard" : "Sign In"}</Button>
             </Link>
-            <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-              <Button className="w-full h-14 rounded-2xl bg-gradient-to-r from-accent to-secondary text-white font-bold">Sign Up</Button>
+            <Link href={primaryLink} onClick={() => setIsMenuOpen(false)}>
+              <Button className="w-full h-14 rounded-2xl bg-gradient-to-r from-accent to-secondary text-white font-bold">{user ? "Go to Dashboard" : "Sign Up"}</Button>
             </Link>
           </motion.div>
         )}
@@ -96,14 +101,14 @@ export default function LandingPage() {
             transition={{ delay: 0.4 }}
             className="flex flex-wrap justify-center gap-4"
           >
-            <Link href="/register">
+            <Link href={primaryLink}>
               <Button className="h-16 px-10 rounded-2xl bg-slate-900 text-white font-bold text-lg hover:bg-slate-800 shadow-2xl transition-all gap-3">
-                Start Your Journey <FaRocket />
+                {user ? "View Dashboard" : "Start Your Journey"} <FaRocket />
               </Button>
             </Link>
-            <Link href="/login">
+            <Link href={secondaryLink}>
               <Button variant="outline" className="h-16 px-10 rounded-2xl border-2 border-slate-200 font-bold text-lg hover:bg-white/50 transition-all">
-                Explore Portal
+                {user ? "Manage Portal" : "Explore Portal"}
               </Button>
             </Link>
           </motion.div>

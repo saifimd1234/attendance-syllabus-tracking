@@ -15,7 +15,8 @@ import {
     FaEye,
     FaEyeSlash,
     FaCheckCircle,
-    FaExclamationCircle
+    FaExclamationCircle,
+    FaArrowLeft
 } from 'react-icons/fa';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -123,8 +124,14 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-6 bg-transparent relative overflow-hidden">
-            {/* Animated background highlights */}
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-transparent relative overflow-hidden">
+            <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-accent font-bold transition-colors group z-50">
+                <div className="p-2 rounded-lg bg-white/50 border border-slate-200 group-hover:bg-accent/10 group-hover:border-accent/20 transition-all">
+                    <FaArrowLeft size={14} />
+                </div>
+                <span className="text-sm uppercase tracking-widest italic font-black">Home</span>
+            </Link>
+
             <div className="absolute top-0 left-0 w-full h-full -z-10">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/20 rounded-full blur-[120px] animate-pulse" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/20 rounded-full blur-[120px] animate-pulse" />

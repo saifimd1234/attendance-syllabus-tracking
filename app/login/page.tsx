@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaLock, FaEnvelope, FaUserShield, FaChevronRight } from 'react-icons/fa';
+import { FaLock, FaEnvelope, FaUserShield, FaChevronRight, FaArrowLeft } from 'react-icons/fa';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 import { useStore } from '@/store/useStore';
+import Link from 'next/link';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -33,7 +34,14 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-[80vh] flex items-center justify-center p-4">
+        <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 relative">
+            <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-accent font-bold transition-colors group z-50">
+                <div className="p-2 rounded-lg bg-white/50 border border-slate-200 group-hover:bg-accent/10 group-hover:border-accent/20 transition-all">
+                    <FaArrowLeft size={14} />
+                </div>
+                <span className="text-sm uppercase tracking-widest italic">Home</span>
+            </Link>
+
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
