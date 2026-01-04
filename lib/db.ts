@@ -38,6 +38,23 @@ async function connect() {
 
     try {
         cached.conn = await cached.promise;
+
+        // Auto-fix for the rollNo_1 index issue
+        try {
+            const collection = mongoose.connection.collection('students');
+            const indexes = await collection.indexes();
+            const rollNoIndex = indexes.find(idx => idx.name === 'rollNo_1');
+
+            if (rollNoIndex) {
+                console.log('Legacy rollNo_1 index detected. Dropping permanently...');
+                await collection.dropIndex('rollNo_1');
+                console.log('rollNo_1 index removed.');
+            }
+        } catch (indexError) {
+            console.error('Error removing rollNo index:', indexError);
+            // Don't throw, just log. We don't want to block connection.
+        }
+
     } catch (e) {
         cached.promise = null;
         throw e;
