@@ -25,7 +25,8 @@ export default function LoginPage() {
             await axios.post('/api/auth/login', { email, password });
             await checkAuth(); // Update global state immediately
             toast.success('Welcome back!');
-            router.push('/dashboard');
+            // Use window.location for a full refresh to ensure cookies are picked up on Vercel
+            window.location.href = '/dashboard';
         } catch (error: any) {
             toast.error(error.response?.data?.error || 'Login failed');
         } finally {
