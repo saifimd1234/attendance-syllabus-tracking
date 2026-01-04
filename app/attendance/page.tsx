@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import toast from 'react-hot-toast';
 
 export default function AttendancePage() {
-    const { students, fetchStudents, saveAttendance, fetchAttendanceByDate, user } = useStore();
+    const { students, fetchStudents, saveAttendance, fetchAttendanceByDate, user, isAuthChecking } = useStore();
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [attendance, setAttendance] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
@@ -85,6 +85,18 @@ export default function AttendancePage() {
             setLoading(false);
         }
     };
+
+    if (isAuthChecking) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background/50 backdrop-blur-sm">
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                    className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full shadow-lg"
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="p-4 sm:p-8 max-w-4xl mx-auto space-y-6">

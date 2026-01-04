@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Dashboard() {
-  const { stats, fetchStats, fetchStudents, students, user } = useStore();
+  const { stats, fetchStats, fetchStudents, students, user, isAuthChecking } = useStore();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
@@ -87,6 +87,18 @@ export default function Dashboard() {
       status: r.status === 'Present' ? 1 : 0
     }));
   }, [selectedStudentId, attendanceRecords, chartRange]);
+
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background/50 backdrop-blur-sm">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full shadow-lg"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-8 space-y-8 max-w-7xl mx-auto relative">

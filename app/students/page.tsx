@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import toast from 'react-hot-toast';
 
 export default function StudentsPage() {
-    const { students, fetchStudents, deleteStudent, stats, fetchStats, user } = useStore();
+    const { students, fetchStudents, deleteStudent, stats, fetchStats, user, isAuthChecking } = useStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -49,6 +49,18 @@ export default function StudentsPage() {
             await deleteStudent(id);
             toast.success('Student deleted');
         }
+    }
+
+    if (isAuthChecking) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background/50 backdrop-blur-sm">
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                    className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full shadow-lg"
+                />
+            </div>
+        );
     }
 
     return (

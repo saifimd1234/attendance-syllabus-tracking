@@ -8,21 +8,23 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
+import { useStore } from '@/store/useStore';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { checkAuth } = useStore();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         try {
             await axios.post('/api/auth/login', { email, password });
+            await checkAuth(); // Update global state immediately
             toast.success('Welcome back!');
             router.push('/');
-            router.refresh();
         } catch (error: any) {
             toast.error(error.response?.data?.error || 'Login failed');
         } finally {

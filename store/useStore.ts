@@ -40,6 +40,7 @@ export type User = {
 type Store = {
     students: Student[];
     isLoading: boolean;
+    isAuthChecking: boolean;
     user: User | null;
     fetchStudents: () => Promise<void>;
     stats: { totalStudents: number; attendance: any[] };
@@ -59,14 +60,18 @@ export const useStore = create<Store>((set) => ({
     students: [],
     stats: { totalStudents: 0, attendance: [] },
     isLoading: false,
+    isAuthChecking: true,
     user: null,
 
     checkAuth: async () => {
+        set({ isAuthChecking: true });
         try {
             const res = await axios.get('/api/auth/me');
             set({ user: res.data.user });
         } catch (error) {
             set({ user: null });
+        } finally {
+            set({ isAuthChecking: false });
         }
     },
 
