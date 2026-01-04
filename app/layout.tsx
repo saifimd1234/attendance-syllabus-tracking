@@ -21,12 +21,17 @@ export default function RootLayout({
         <html lang="en">
             <body className={inter.className}>
                 <BackgroundBeams />
-                <Navbar />
-                <main className="sm:pl-20 pb-20 sm:pb-4 min-h-screen relative z-10 overflow-x-hidden">
+                <NavbarWrapper />
+                <main className="pb-20 sm:pb-4 min-h-screen relative z-10 overflow-x-hidden">
                     {children}
                 </main>
                 <Toaster position="top-right" />
             </body>
         </html>
     );
+}
+
+// Separate component to use Client hooks safely
+function NavbarWrapper() {
+    return <Navbar />;
 }

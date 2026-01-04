@@ -24,7 +24,7 @@ export default function LoginPage() {
             await axios.post('/api/auth/login', { email, password });
             await checkAuth(); // Update global state immediately
             toast.success('Welcome back!');
-            router.push('/');
+            router.push('/dashboard');
         } catch (error: any) {
             toast.error(error.response?.data?.error || 'Login failed');
         } finally {
