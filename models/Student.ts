@@ -5,6 +5,7 @@ const StudentSchema = new Schema({
     class: { type: String, default: 'Not Set' },
     school: { type: String, default: 'Not Set' },
     status: { type: String, default: 'Active' },
+    joiningDate: { type: Date, required: false },
 }, { timestamps: true });
 
 const Student = models.Student || model('Student', StudentSchema);

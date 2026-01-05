@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_super_secret_jwt_key_123";
 export async function POST(req: NextRequest) {
     try {
         await connect();
-        const { name, email, password, admin, studentId } = await req.json();
+        const { name, email, password, admin, studentId, joiningDate } = await req.json();
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
@@ -26,7 +26,8 @@ export async function POST(req: NextRequest) {
                 name,
                 class: 'Not Set',
                 school: 'Not Set',
-                status: 'Active'
+                status: 'Active',
+                joiningDate: joiningDate || undefined
             });
             linkStudentId = newStudent._id;
         }

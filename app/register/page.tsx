@@ -16,7 +16,8 @@ import {
     FaEyeSlash,
     FaCheckCircle,
     FaExclamationCircle,
-    FaArrowLeft
+    FaArrowLeft,
+    FaCalendarAlt
 } from 'react-icons/fa';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,6 +32,7 @@ export default function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [joiningDate, setJoiningDate] = useState('');
     const [socialLoading, setSocialLoading] = useState<string | null>(null);
     const router = useRouter();
 
@@ -64,7 +66,7 @@ export default function RegisterPage() {
 
         setLoading(true);
         try {
-            await axios.post('/api/auth/register', { name, email, password });
+            await axios.post('/api/auth/register', { name, email, password, joiningDate });
             toast.success('Registration successful! Welcome aboard 🎉');
             router.push('/login');
         } catch (error: any) {
@@ -175,7 +177,7 @@ export default function RegisterPage() {
                                     <div className="relative group">
                                         <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-accent transition-colors" />
                                         <Input
-                                            placeholder="John Doe"
+                                            placeholder="Enter your full name"
                                             value={name}
                                             onChange={(e) => setName(e.target.value)}
                                             className="pl-12 h-14 bg-white/40 dark:bg-slate-800/40 border-slate-200/50 dark:border-slate-700/50 focus:border-accent/50 rounded-xl transition-all shadow-sm focus:ring-2 focus:ring-accent/10"
@@ -193,7 +195,7 @@ export default function RegisterPage() {
                                         <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-accent transition-colors" />
                                         <Input
                                             type="email"
-                                            placeholder="hello@example.com"
+                                            placeholder="Enter your email address"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             className="pl-12 h-14 bg-white/40 dark:bg-slate-800/40 border-slate-200/50 dark:border-slate-700/50 focus:border-accent/50 rounded-xl transition-all shadow-sm focus:ring-2 focus:ring-accent/10"
@@ -244,6 +246,28 @@ export default function RegisterPage() {
                                         />
                                     </div>
                                 </div>
+
+                                {/* Joining Date Field */}
+                                <div className="space-y-2 md:col-span-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                                        <FaCalendarAlt className="text-[10px]" /> Joining Date
+                                    </label>
+                                    <div className="relative group">
+                                        <FaCalendarAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-accent transition-colors z-10" />
+                                        <Input
+                                            type="date"
+                                            placeholder="you can enter your approx date"
+                                            value={joiningDate}
+                                            onChange={(e) => setJoiningDate(e.target.value)}
+                                            className="pl-12 h-14 bg-white/40 dark:bg-slate-800/40 border-slate-200/50 dark:border-slate-700/50 focus:border-accent/50 rounded-xl transition-all shadow-sm focus:ring-2 focus:ring-accent/10 appearance-none"
+                                        />
+                                        {!joiningDate && (
+                                            <span className="absolute left-12 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-sm">
+                                                you can enter your approx date
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
 
                             <Button
@@ -272,11 +296,12 @@ export default function RegisterPage() {
                                     <span className="w-full border-t border-slate-300 dark:border-slate-600"></span>
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-white/50 backdrop-blur-md dark:bg-slate-800/50 px-4 text-slate-500 font-bold">Or continue with</span>
+                                    <span className="bg-white/50 backdrop-blur-md dark:bg-slate-800/50 px-4 text-slate-500 font-bold">continue with social- coming soon!</span>
                                 </div>
                             </div>
 
-                            {/* Social Buttons */}
+                            {/* Social Buttons - remove it as buttons are not functional */}
+                            {/* 
                             <div className="grid grid-cols-3 gap-4">
                                 <Button
                                     type="button"
@@ -303,6 +328,7 @@ export default function RegisterPage() {
                                     <FaGithub className="text-xl group-hover:scale-110 transition-transform text-slate-900 dark:text-white" />
                                 </Button>
                             </div>
+                            */}
 
                             {/* Footer Link */}
                             <div className="text-center pt-6">

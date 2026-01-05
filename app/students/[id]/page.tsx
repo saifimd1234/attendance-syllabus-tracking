@@ -28,7 +28,8 @@ export default function StudentProfile() {
         name: '',
         school: '',
         class: '',
-        status: ''
+        status: '',
+        joiningDate: ''
     });
 
     useEffect(() => {
@@ -41,7 +42,8 @@ export default function StudentProfile() {
                     name: res.data.student.name,
                     school: res.data.student.school,
                     class: res.data.student.class,
-                    status: res.data.student.status
+                    status: res.data.student.status,
+                    joiningDate: res.data.student.joiningDate ? new Date(res.data.student.joiningDate).toISOString().split('T')[0] : ''
                 });
             } catch (error: any) {
                 console.error(error);
@@ -187,6 +189,22 @@ export default function StudentProfile() {
                                     )}
                                 </div>
                             </div>
+
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Joining Date</span>
+                                {isEditing ? (
+                                    <Input
+                                        type="date"
+                                        value={editForm.joiningDate}
+                                        onChange={(e) => setEditForm({ ...editForm, joiningDate: e.target.value })}
+                                        className="h-9"
+                                    />
+                                ) : (
+                                    <div className="p-3 bg-slate-50 rounded-xl font-semibold border border-transparent hover:border-slate-200 transition-all">
+                                        {student.joiningDate ? new Date(student.joiningDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Not Set'}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <div className="pt-6 grid grid-cols-2 gap-4 text-center">
@@ -289,6 +307,6 @@ export default function StudentProfile() {
                     </AnimatePresence>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
